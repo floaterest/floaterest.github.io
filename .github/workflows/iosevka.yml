@@ -118,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ env.iosevka }}
+        working-directory: ${{ env.cwd }}
     steps:
       - uses: actions/checkout@v2
 
