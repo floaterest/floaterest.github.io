@@ -141,4 +141,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: iosevka-ttf-nf
-          path: ttf-nf/*
+          path: ${{ env.cwd }}/ttf-nf/*
