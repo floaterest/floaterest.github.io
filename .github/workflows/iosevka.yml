@@ -18,85 +18,85 @@ env:
 
 
 jobs:
-  build:
-    name: Build Iosevka
-    strategy:
-      matrix:
-        plan: [iosevka, iosevka-extended]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+  # build:
+  #   name: Build Iosevka
+  #   strategy:
+  #     matrix:
+  #       plan: [iosevka, iosevka-extended]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Cache Iosevka
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.iosevka }}
-          key: ${{ matrix.plan }}-${{ hashFiles(env.template) }}
-      - run: tree -L 3 -I node_modules
-      - name: Generate build plans
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: ${{ env.cwd }}/iosevka.sh ${{ env.template }}
+  #     - name: Cache Iosevka
+  #       id: cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ${{ env.iosevka }}
+  #         key: ${{ matrix.plan }}-${{ hashFiles(env.template) }}
+  #     - run: tree -L 3 -I node_modules
+  #     - name: Generate build plans
+  #       if: steps.cache.outputs.cache-hit != 'true'
+  #       run: ${{ env.cwd }}/iosevka.sh ${{ env.template }}
 
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        if: steps.cache.outputs.cache-hit != 'true'
-        with: { packages: ttfautohint, version: 1.0 }
+  #     - uses: awalsh128/cache-apt-pkgs-action@latest
+  #       if: steps.cache.outputs.cache-hit != 'true'
+  #       with: { packages: ttfautohint, version: 1.0 }
 
-      - name: Clone Iosevka and copy build plans
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          git clone https://github.com/be5invis/Iosevka.git ${{ env.iosevka }} --depth 1
-          cp ${{ env.cwd }}/${{ matrix.plan }}.toml ${{ env.iosevka }}/private-build-plans.toml
+  #     - name: Clone Iosevka and copy build plans
+  #       if: steps.cache.outputs.cache-hit != 'true'
+  #       run: |
+  #         git clone https://github.com/be5invis/Iosevka.git ${{ env.iosevka }} --depth 1
+  #         cp ${{ env.cwd }}/${{ matrix.plan }}.toml ${{ env.iosevka }}/private-build-plans.toml
 
-      - uses: actions/setup-node@v3
-        if: steps.cache.outputs.cache-hit != 'true'
-        with: { node-version: 'latest' }
+  #     - uses: actions/setup-node@v3
+  #       if: steps.cache.outputs.cache-hit != 'true'
+  #       with: { node-version: 'latest' }
 
-      - name: Build ${{ matrix.plan }}
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          cd ${{ env.iosevka }}
-          npm ci && npm run build -- contents::${{ matrix.plan }}
+  #     - name: Build ${{ matrix.plan }}
+  #       if: steps.cache.outputs.cache-hit != 'true'
+  #       run: |
+  #         cd ${{ env.iosevka }}
+  #         npm ci && npm run build -- contents::${{ matrix.plan }}
 
-      - name: Upload TTF
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.plan }}-ttf
-          path: ${{ env.dist }}/${{ matrix.plan }}/ttf/*
+  #     - name: Upload TTF
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: ${{ matrix.plan }}-ttf
+  #         path: ${{ env.dist }}/${{ matrix.plan }}/ttf/*
 
-      - name: Upload WOFF2
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.plan }}-woff2
-          path: |
-            ${{ env.dist }}/${{ matrix.plan }}/${{ matrix.plan }}.css
-            ${{ env.dist }}/${{ matrix.plan }}/woff2/*
+  #     - name: Upload WOFF2
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: ${{ matrix.plan }}-woff2
+  #         path: |
+  #           ${{ env.dist }}/${{ matrix.plan }}/${{ matrix.plan }}.css
+  #           ${{ env.dist }}/${{ matrix.plan }}/woff2/*
 
-  publish:
-    name: Publish Fonts
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v3
-        with:
-          name: iosevka-woff2
-          path: ${{ env.iosevka }}
+  # publish:
+  #   name: Publish Fonts
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         name: iosevka-woff2
+  #         path: ${{ env.iosevka }}
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: iosevka-extended-woff2
-          path: ${{ env.iosevka }}
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         name: iosevka-extended-woff2
+  #         path: ${{ env.iosevka }}
 
-      - name: No TTF Fonts
-        run: perl -i -pe "s/url\('ttf\/.+,\s*//g" ${{ env.iosevka }}/*.css
+  #     - name: No TTF Fonts
+  #       run: perl -i -pe "s/url\('ttf\/.+,\s*//g" ${{ env.iosevka }}/*.css
 
-      - run: tree ${{ env.iosevka }}
+  #     - run: tree ${{ env.iosevka }}
 
-      - uses: actions/upload-artifact@v2
-        name: fonts
-        with:
-          path: ${{ env.iosevka }}
+  #     - uses: actions/upload-artifact@v2
+  #       name: fonts
+  #       with:
+  #         path: ${{ env.iosevka }}
 
   # deploy:
   #   needs: upload
@@ -114,16 +114,16 @@ jobs:
 
   patch-iosevka:
     name: Patch Nerd Font
-    needs: [ build ]
+    # needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: Download Iosevka TTF
-        uses: actions/download-artifact@v2
-        with:
-          name: iosevka-ttf
-          path: ttf
+      # - name: Download Iosevka TTF
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: iosevka-ttf
+      #     path: ttf
 
       - name: Patch nerd fonts
         run: |
