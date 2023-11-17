@@ -13,10 +13,10 @@ light = re.compile(r'(Extralight|Light)')
 
 data = {}
 
-def to_names(filename: str) -> (str, str, str):
+def to_names(filename: str) -> (str, str, str, str):
     """
     generate names from font's filename
-    :return: fontfamily, fontname, fullname
+    :return: fontfamily, fontname, fullname, filename
     """
     full = ['Iosevka']
     family = full[:]
@@ -38,7 +38,7 @@ def to_names(filename: str) -> (str, str, str):
     family.append('NF')
     name.append('NF')
     full.extend(['Nerd', 'Font', 'Complete'])
-    return ' '.join(family), '-'.join(name), ' '.join(full)
+    return ' '.join(family), '-'.join(name), ' '.join(full), '-'.join(name).lower()
 
 
 def new_sfnt(sfnt, family, font, full):
@@ -62,21 +62,21 @@ def main(srcdir: str, destdir: str):
     for file in os.listdir(srcdir):
         if file.endswith(EXT):
             f = fontforge.open(os.path.join(srcdir, file))
-            f.familyname, f.fontname, f.fullname = to_names(file)
+            f.familyname, f.fontname, f.fullname, filename = to_names(file)
             f.sfnt_names = new_sfnt(f.sfnt_names, f.familyname, f.fontname, f.fullname)
 
             if f.familyname in data:
                 data[f.familyname].append([f.fontname, f.fullname, f.sfnt_names])
             else:
                 data[f.familyname] = [[f.fontname, f.fullname, f.sfnt_names]]
-            f.generate(os.path.join(destdir, f.fullname + EXT))
+            f.generate(os.path.join(destdir, filename + EXT))
 
     with open(os.path.join(destdir, 'iosevka.json'),'w') as f:
         json.dump(data, f, indent=4)
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('src', help='source/input directory')
-    parser.add_argument('dest', help='destination/output directory')
+    parser.add_argument('src', help='source directory')
+    parser.add_argument('dest', help='destination directory')
     args = parser.parse_args()
     main(args.src, args.dest)
