@@ -4,9 +4,9 @@ on:
   # at 00:00 UTC on 1st of every month
   # schedule: [{cron: "0 0 1 * *"}]
   push:
-    paths:
-      - 'packages/iosevka/**'
-      - '.github/workflows/iosevka.yml'
+    # paths:
+    #   - 'packages/iosevka/**'
+    #   - '.github/workflows/iosevka.yml'
     branches-ignore: [ main ]
   workflow_dispatch:
 
