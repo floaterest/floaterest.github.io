@@ -126,7 +126,9 @@ jobs:
           path: ttf
 
       - name: Patch nerd fonts
-        run: make nerd
+        run: |
+          ls -a
+          make nerd
 
       - name: Change font names
         run: make unrename
