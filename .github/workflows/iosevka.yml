@@ -122,17 +122,28 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Cache Nerd Fonts
+        id: nerd
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.cwd }}/ttf-nf
+          key: ${{ hashFiles(env.template) }}
+
       - name: Download Iosevka TTF
+        if: steps.nerd.outputs.cache-hit != 'true'
         uses: actions/download-artifact@v2
         with:
           name: iosevka-ttf
           path: ttf
 
       - name: Patch nerd fonts
+        if: steps.nerd.outputs.cache-hit != 'true'
         run: make nerd
 
       - name: Change font names
+        if: steps.nerd.outputs.cache-hit != 'true'
         run: make unrename
+
 
       - name: List files
         run: tree -I nerd-fonts
