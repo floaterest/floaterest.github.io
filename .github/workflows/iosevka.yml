@@ -112,30 +112,30 @@ jobs:
   #       id: deployment
   #       uses: actions/deploy-pages@v1
 
-  # patch-iosevka:
-  #   name: Patch Nerd Font
-  #   needs: [ build-iosevka ]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
+  patch-iosevka:
+    name: Patch Nerd Font
+    needs: [ build-iosevka ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
-  #     - name: Download Iosevka TTF
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: iosevka-ttf
-  #         path: ttf
+      - name: Download Iosevka TTF
+        uses: actions/download-artifact@v2
+        with:
+          name: iosevka-ttf
+          path: ttf
 
-  #     - name: Patch nerd fonts
-  #       run: make nerd
+      - name: Patch nerd fonts
+        run: make nerd
 
-  #     - name: Change font names
-  #       run: make unrename
+      - name: Change font names
+        run: make unrename
 
-  #     - name: List files
-  #       run: tree -I nerd-fonts
+      - name: List files
+        run: tree -I n  erd-fonts
 
-  #     - name: Upload TTF NF artifacts
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: iosevka-ttf-nf
-  #         path: ttf-nf/*
+      - name: Upload TTF NF artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: iosevka-ttf-nf
+          path: ttf-nf/*
