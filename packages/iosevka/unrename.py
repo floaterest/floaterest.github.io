@@ -6,8 +6,6 @@ from argparse import ArgumentParser
 
 import fontforge
 
-EXT = '.ttf'
-
 weight = re.compile(r'(heavy|(extra|semi)bold|medium|thin)')
 light = re.compile(r'(extralight|light)')
 
@@ -61,8 +59,7 @@ def new_sfnt(sfnt, family, font, full):
 def main(srcdir: str, destdir: str):
     os.makedirs(destdir, exist_ok=True)
     for file in os.listdir(srcdir):
-        if not file.endswith(EXT):
-            continue
+        ext = os.path.splitext(file)[1]
         f = fontforge.open(os.path.join(srcdir, file))
         f.familyname, f.fontname, f.fullname, filename = to_names(file)
         f.sfnt_names = new_sfnt(f.sfnt_names, f.familyname, f.fontname, f.fullname)
@@ -71,7 +68,7 @@ def main(srcdir: str, destdir: str):
             data[f.familyname].append([f.fontname, f.fullname, f.sfnt_names])
         else:
             data[f.familyname] = [[f.fontname, f.fullname, f.sfnt_names]]
-        f.generate(os.path.join(destdir, filename + EXT))
+        f.generate(os.path.join(destdir, f'{filename}.{ext}'))
 
     with open(os.path.join(destdir, 'iosevka.json'),'w') as f:
         json.dump(data, f, indent=4)
