@@ -1,5 +1,5 @@
 plan = iosevka
-fonts := $(notdir $(wildcard ttf/*.ttf))
+fonts := $(notdir $(wildcard woff2/*.woff2))
 
 install = sudo apt-get update && sudo apt-get install --no-install-recommends -y $(1)
 clone = git clone https://github.com/$(1).git --depth 1

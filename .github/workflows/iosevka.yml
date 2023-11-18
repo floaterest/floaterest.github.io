@@ -72,8 +72,8 @@ jobs:
             ${{ env.dist }}/${{ matrix.plan }}/${{ matrix.plan }}.css
             ${{ env.dist }}/${{ matrix.plan }}/woff2/*
 
-  publish:
-    name: Publish Fonts
+  upload:
+    name: Upload Fonts as Artifact
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -116,6 +116,9 @@ jobs:
     name: Patch Nerd Font
     needs: [ build ]
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        plan: [iosevka, iosevka-extended]
     defaults:
       run:
         working-directory: ${{ env.cwd }}
@@ -129,11 +132,11 @@ jobs:
           path: ${{ env.cwd }}/woff-nf
           key: ${{ hashFiles(env.template) }}
 
-      - name: Download Iosevka TTF
+      - name: Download ${{ matrix.plan }} WOFF2
         if: steps.nerd.outputs.cache-hit != 'true'
         uses: actions/download-artifact@v2
         with:
-          name: iosevka-woff2
+          name: ${{ matrix.plan }}-woff2
           path: woff2
 
       - name: Patch nerd fonts
