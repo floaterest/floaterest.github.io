@@ -125,11 +125,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Download ${{ matrix.plan }} WOFF2
+      - name: Download ${{ matrix.plan }} TTF
         uses: actions/download-artifact@v2
         with:
-          name: ${{ matrix.plan }}-woff2
-          path: ${{ env.cwd }}/woff2
+          name: ${{ matrix.plan }}-ttf
+          path: ${{ env.cwd }}/ttf
 
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with: { packages: fontforge python3-fontforge }
@@ -155,14 +155,14 @@ jobs:
       - name: Patch nerd fonts
         run: |
           set -x
-          for f in `find woff2 -name '*.woff2'`; do
+          for f in `find ttf -name '*.ttf'`; do
               fontforge nerd-fonts/font-patcher "$f" -c -q --no-progressbars -out nerd
           done
 
       - run: tree -I nerd-fonts
 
       - name: Change font names
-        run: fontforge unrename.py nerd woff2-nf
+        run: fontforge unrename.py nerd ttf-nf
 
       - name: List files
         run: tree -I nerd-fonts
@@ -170,5 +170,5 @@ jobs:
       - name: Upload WOFF2 NF artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.plan }}-woff2-nf
-          path: ${{ env.cwd }}/woff2-nf/*
+          name: ${{ matrix.plan }}-ttf-nf
+          path: ${{ env.cwd }}/ttf-nf/*
