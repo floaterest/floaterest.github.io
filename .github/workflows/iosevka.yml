@@ -137,6 +137,7 @@ jobs:
       - run: find -name '*.woff2'
 
       - name: Download patcher
+        run: |
           curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
           unzip FontPatcher.zip
       - name: Patch nerd fonts
