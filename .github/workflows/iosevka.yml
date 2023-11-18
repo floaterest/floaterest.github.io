@@ -134,15 +134,29 @@ jobs:
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with: { packages: fontforge python3-fontforge }
 
-      - name: Download patcher
-        run: |
-          curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
-          unzip -n FontPatcher.zip
+        # curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
+        # unzip -n FontPatcher.zip
+
+      - name: Cache nerd-fonts
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.cwd }}/nerd-fonts
+          key: nerd-fonts
+
+      - name: Clone nerd-fonts
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: git clone https://github.com/ryanoasis/nerd-fonts.git --depth 1
+        
+      - name: Pull nerd-fonts
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: git -C nerd-fonts pull
+
       - name: Patch nerd fonts
         run: |
           set -x
           for f in `find -name '*.ttf'`; do
-              ./font-patcher "$f" -c -q --no-progressbars -out nerd
+              fontforge nerd-fonts/font-patcher "$f" -c -q --no-progressbars -out nerd
           done
 
       - run: tree -I nerd-fonts
