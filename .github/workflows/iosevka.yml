@@ -134,12 +134,16 @@ jobs:
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with: { packages: fontforge }
 
-      - run: tree -I nerd-fonts
+      - run: |
+          tree -I nerd-fonts
+          find -name '*.woff2'
 
       - name: Patch nerd fonts
         run: |
           git clone https://github.com/ryanoasis/nerd-fonts.git --depth 1
-          ./patch.sh woff2/*.woff2
+          for f in `find -name '*.woff2'` do
+              fontforge nerd-fonts/font-patcher "$f" -c -q --no-progressbars -out nerd
+          done
 
       - run: tree -I nerd-fonts
 
