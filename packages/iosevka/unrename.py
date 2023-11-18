@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 
 import fontforge
 
-EXT = '.woff2'
+EXT = '.ttf'
 
 weight = re.compile(r'(heavy|(extra|semi)bold|medium|thin)')
 light = re.compile(r'(extralight|light)')
@@ -20,7 +20,7 @@ def to_names(filename: str) -> (str, str, str, str):
     """
     full = ['Iosevka', 'Custom']
     family = full[:]
-    filename = filenane.lower()
+    filename = filename.lower()
     if 'extended' in filename:
         full.append('Extended')
         family.append('Ext')
