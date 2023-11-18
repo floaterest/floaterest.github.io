@@ -136,22 +136,14 @@ jobs:
 
       - run: find -name '*.woff2'
 
-      - name: Cache nerd-fonts
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.cwd }}/nerd-fonts
-          key: nerd-fonts
-
-      - if: steps.cache.outputs.cache-hit != 'true'
-        run: git clone https://github.com/ryanoasis/nerd-fonts.git --depth 1
-      - if: steps.cache.outputs.cache-hit == 'true'
-        run: git -C nerd-fonts pull
-
+      - name: Download patcher
+          curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
+          unzip FontPatcher.zip
       - name: Patch nerd fonts
         run: |
           for f in `find -name '*.woff2'`; do
-              fontforge nerd-fonts/font-patcher "$f" -c -q --no-progressbars -out nerd
+              echo $f
+              ./font-patcher "$f" -c -q --no-progressbars -out nerd
           done
 
       - run: tree -I nerd-fonts
