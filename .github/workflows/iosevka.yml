@@ -132,7 +132,7 @@ jobs:
           path: ${{ env.cwd }}/woff2
 
       - uses: awalsh128/cache-apt-pkgs-action@latest
-        with: { packages: fontforge }
+        with: { packages: fontforge python3-fontforge }
 
       - run: find -name '*.woff2'
 
