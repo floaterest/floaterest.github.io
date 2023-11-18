@@ -6,10 +6,10 @@ from argparse import ArgumentParser
 
 import fontforge
 
-EXT = '.ttf'
+EXT = '.woff2'
 
-weight = re.compile(r'(Heavy|(Extra|Semi)bold|Medium|Thin)')
-light = re.compile(r'(Extralight|Light)')
+weight = re.compile(r'(heavy|(extra|semi)bold|medium|thin)')
+light = re.compile(r'(extralight|light)')
 
 data = {}
 
@@ -18,9 +18,10 @@ def to_names(filename: str) -> (str, str, str, str):
     generate names from font's filename
     :return: fontfamily, fontname, fullname, filename
     """
-    full = ['Iosevka']
+    full = ['Iosevka', 'Custom']
     family = full[:]
-    if 'Extended' in filename:
+    filename = filenane.lower()
+    if 'extended' in filename:
         full.append('Extended')
         family.append('Ext')
     if w := weight.search(filename):
@@ -30,14 +31,14 @@ def to_names(filename: str) -> (str, str, str, str):
         full.append(l.group())
         # family.append(l.group().lower().replace('light','lite').capitalize())
         family.append(l.group().lower().capitalize())
-    if 'Italic' in filename:
+    if 'italic' in filename:
         full.append('Italic')
-    if 'Bold' in filename:
+    if 'bold' in filename:
         full.append('Bold')
     name = full[:]
     family.append('NF')
     name.append('NF')
-    full.extend(['Nerd', 'Font', 'Complete'])
+    full.extend(['Nerd', 'Font'])
     return ' '.join(family), '-'.join(name), ' '.join(full), '-'.join(name).lower()
 
 
@@ -60,16 +61,17 @@ def new_sfnt(sfnt, family, font, full):
 def main(srcdir: str, destdir: str):
     os.makedirs(destdir, exist_ok=True)
     for file in os.listdir(srcdir):
-        if file.endswith(EXT):
-            f = fontforge.open(os.path.join(srcdir, file))
-            f.familyname, f.fontname, f.fullname, filename = to_names(file)
-            f.sfnt_names = new_sfnt(f.sfnt_names, f.familyname, f.fontname, f.fullname)
+        if not file.endswith(EXT):
+            continue
+        f = fontforge.open(os.path.join(srcdir, file))
+        f.familyname, f.fontname, f.fullname, filename = to_names(file)
+        f.sfnt_names = new_sfnt(f.sfnt_names, f.familyname, f.fontname, f.fullname)
 
-            if f.familyname in data:
-                data[f.familyname].append([f.fontname, f.fullname, f.sfnt_names])
-            else:
-                data[f.familyname] = [[f.fontname, f.fullname, f.sfnt_names]]
-            f.generate(os.path.join(destdir, filename + EXT))
+        if f.familyname in data:
+            data[f.familyname].append([f.fontname, f.fullname, f.sfnt_names])
+        else:
+            data[f.familyname] = [[f.fontname, f.fullname, f.sfnt_names]]
+        f.generate(os.path.join(destdir, filename + EXT))
 
     with open(os.path.join(destdir, 'iosevka.json'),'w') as f:
         json.dump(data, f, indent=4)

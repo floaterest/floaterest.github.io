@@ -25,7 +25,7 @@ kosugi:
 	mkdir -p fonts
 	cp kosugi-maru/fonts/ttf/KosugiMaru-Regular.ttf fonts/kosugi-maru.ttf
 	cp kosugi-maru/fonts/webfonts/KosugiMaru-Regular.woff2  fonts/kosugi-maru.woff2
-	
+
 # merge iosevka and kosugi-maru
 iokosu:
 	$(call install,fontforge)
@@ -38,10 +38,10 @@ nerd-dep:
 	$(call install,fontforge)
 	$(call clone,ryanoasis/nerd-fonts)
 
-# patch each ttf font
-$(fonts): %.ttf: ttf/%.ttf
+# patch each woff2 font
+$(fonts): %.woff2: woff2/%.woff2
 	fontforge nerd-fonts/font-patcher $? -c -q --no-progressbars -out nerd
-	
+
 # change font names
 unrename:
-	fontforge unrename.py nerd ttf-nf
+	fontforge unrename.py nerd woff2-nf

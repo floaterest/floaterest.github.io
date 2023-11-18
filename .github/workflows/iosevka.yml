@@ -126,15 +126,15 @@ jobs:
         id: nerd
         uses: actions/cache@v3
         with:
-          path: ${{ env.cwd }}/ttf-nf
+          path: ${{ env.cwd }}/woff-nf
           key: ${{ hashFiles(env.template) }}
 
       - name: Download Iosevka TTF
         if: steps.nerd.outputs.cache-hit != 'true'
         uses: actions/download-artifact@v2
         with:
-          name: iosevka-ttf
-          path: ttf
+          name: iosevka-woff2
+          path: woff2
 
       - name: Patch nerd fonts
         if: steps.nerd.outputs.cache-hit != 'true'
