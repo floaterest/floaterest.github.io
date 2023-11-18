@@ -139,11 +139,11 @@ jobs:
       - name: Download patcher
         run: |
           curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
-          unzip FontPatcher.zip
+          unzip -n FontPatcher.zip
       - name: Patch nerd fonts
         run: |
+          set -x
           for f in `find -name '*.woff2'`; do
-              echo $f
               ./font-patcher "$f" -c -q --no-progressbars -out nerd
           done
 
