@@ -140,6 +140,7 @@ jobs:
           unzip -n FontPatcher.zip
       - name: Patch nerd fonts
         run: |
+          set -x
           for f in `find -name '*.ttf'`; do
               ./font-patcher "$f" -c -q --no-progressbars -out nerd
           done
