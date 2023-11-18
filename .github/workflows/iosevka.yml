@@ -125,34 +125,32 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache Nerd Fonts
-        id: nerd
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.cwd }}/woff-nf
-          key: ${{ hashFiles(env.template) }}
-
       - name: Download ${{ matrix.plan }} WOFF2
-        if: steps.nerd.outputs.cache-hit != 'true'
         uses: actions/download-artifact@v2
         with:
           name: ${{ matrix.plan }}-woff2
           path: woff2
 
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with: { packages: fontforge }
+
+      - run: tree -I nerd-fonts
+
       - name: Patch nerd fonts
-        if: steps.nerd.outputs.cache-hit != 'true'
-        run: make nerd
+        run: |
+          git clone https://github.com/ryanoasis/nerd-fonts.git --depth 1
+          ./patch.sh woff2/*.woff2
+
+      - run: tree -I nerd-fonts
 
       - name: Change font names
-        if: steps.nerd.outputs.cache-hit != 'true'
-        run: make unrename
-
+        run: fontforge unrename.py nerd woff2-nf
 
       - name: List files
         run: tree -I nerd-fonts
 
-      - name: Upload TTF NF artifacts
+      - name: Upload WOFF2 NF artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: iosevka-ttf-nf
-          path: ${{ env.cwd }}/ttf-nf/*
+          name: ${{ matrix.plan }}-woff2-nf
+          path: ${{ env.cwd }}/woff2-nf/*

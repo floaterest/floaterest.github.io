@@ -1,10 +1,8 @@
 plan = iosevka
-fonts := $(notdir $(wildcard woff2/*.woff2))
 
 install = sudo apt-get update && sudo apt-get install --no-install-recommends -y $(1)
 clone = git clone https://github.com/$(1).git --depth 1
 
-fontforge := $(call install,fontforge)
 autohint := $(call install,ttfautohint)
 
 .ONESHELL: # allow cd
@@ -30,18 +28,3 @@ kosugi:
 iokosu:
 	$(call install,fontforge)
 	fontforge merge.py iosevka/iosevka-regular.ttf kosugi/kosugi-maru.ttf iokosu.ttf
-
-# patch iosevka to nerd font
-nerd: nerd-dep $(fonts)
-# install dependecies for nerd font
-nerd-dep:
-	$(call install,fontforge)
-	$(call clone,ryanoasis/nerd-fonts)
-
-# patch each woff2 font
-$(fonts): %.woff2: woff2/%.woff2
-	fontforge nerd-fonts/font-patcher $? -c -q --no-progressbars -out nerd
-
-# change font names
-unrename:
-	fontforge unrename.py nerd woff2-nf
