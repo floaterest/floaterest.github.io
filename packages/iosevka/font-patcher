@@ -1397,7 +1397,8 @@ class font_patcher:
                     (scale_ratio_x, scale_ratio_y) = (glyph_scale_data[0], glyph_scale_data[0])
             else:
                 (scale_ratio_x, scale_ratio_y) = self.get_scale_factors(sym_dim, stretch)
-
+            print('factors', self.get_scale_factors(sym_dim, stretch))
+            print('data', glyph_scale_data)
             overlap = sym_attr['params'].get('overlap')
             if overlap and ypadding:
                 logger.critical("Conflicting params: overlap and ypadding")
