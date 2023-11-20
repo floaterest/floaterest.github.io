@@ -38,6 +38,8 @@ brace = "straight"
 lig-ltgteq = "slanted"
 lig-equal-chain = "without-notch"
 lig-hyphen-chain = "without-notch"
+dollar = "interrupted-cap"
+cent = "open"
 
 [buildPlans.template.variants.italic]
 capital-a = "curly-serifless"
