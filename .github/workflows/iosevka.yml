@@ -114,7 +114,7 @@ jobs:
         run: |
           set -x
           for f in `find ttf -name '*.ttf'`; do
-              fontforge -script ./font-patcher "$f" -q -out nerd
+              fontforge -script ./font-patcher "$f" -c -q -out nerd
           done
 
       - run: tree -I nerd-fonts
