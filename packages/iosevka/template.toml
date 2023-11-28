@@ -96,20 +96,17 @@ shape = "italic"
 menu = "italic"
 css = "italic"
 
+# [buildPlans.template.ligations]
+# inherits = "dlig"
+
 [buildPlans.template.ligations]
 enables = [
-    "arrow", "arrow2",
+    "arrow-l", "arrow-r", "arrow-lr",
+    "counter-arrow-l", "counter-arrow-r",
     "trig",
-    "eqeqeq", "eqeq", "ineq", "exeqeq", "exeq",
-    "ltgt-diamond-tag", "ltgt-slash-tag",
-    "plusplus",
+    "eqeqeq", "eqeq", "lteq", "gteq", "exeq", "slasheq",
+    "ltgt-slash-tag", "slash-asterisk", "plusplus",
     "kern-dotty", "kern-bars",
-    "logic",
-    "llgg", "llggeq",
-    "dot-as-operator",
-    "html-comment",
-    "brace-bar", "brack-bar",
-    "connected-underscore",
-    "connected-number-sign",
-    "connected-hyphen-as-semi-dashed-line",
+    "logic", "llgg", "llggeq", "html-comment",
+    "connected-underscore", "connected-number-sign", "connected-hyphen"
 ]
