@@ -68,7 +68,7 @@ def main(srcdir: str, destdir: str):
             data[f.familyname].append([f.fontname, f.fullname, f.sfnt_names])
         else:
             data[f.familyname] = [[f.fontname, f.fullname, f.sfnt_names]]
-        f.generate(os.path.join(destdir, f'{filename}.{ext}'))
+        f.generate(os.path.join(destdir, f'{filename}{ext}'))
 
     with open(os.path.join(destdir, 'iosevka.json'),'w') as f:
         json.dump(data, f, indent=4)
