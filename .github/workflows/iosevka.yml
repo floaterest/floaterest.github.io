@@ -4,9 +4,9 @@ on:
   # at 00:00 UTC on 1st of every month
   # schedule: [{cron: "0 0 1 * *"}]
   push:
-    # paths:
-    #   - 'packages/iosevka/**'
-    #   - '.github/workflows/iosevka.yml'
+    paths:
+      - 'packages/iosevka/**'
+      - '.github/workflows/iosevka.yml'
     branches-ignore: [ main ]
   workflow_dispatch:
 
@@ -72,46 +72,6 @@ jobs:
             ${{ env.dist }}/${{ matrix.plan }}/${{ matrix.plan }}.css
             ${{ env.dist }}/${{ matrix.plan }}/woff2/*
 
-  # upload:
-  #   name: Upload Fonts as Artifact
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: iosevka-woff2
-  #         path: ${{ env.iosevka }}
-
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: iosevka-extended-woff2
-  #         path: ${{ env.iosevka }}
-
-  #     - name: No TTF Fonts
-  #       run: perl -i -pe "s/url\('ttf\/.+,\s*//g" ${{ env.iosevka }}/*.css
-
-  #     - run: tree ${{ env.iosevka }}
-
-  #     - uses: actions/upload-artifact@v2
-  #       name: fonts
-  #       with:
-  #         path: ${{ env.iosevka }}
-
-  # deploy:
-  #   needs: upload
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     pages: write
-  #     id-token: write
-  #   environment:
-  #     name: github-pages
-  #     url: ${{ steps.deployment.outputs.page_url }}
-  #   steps:
-  #     - name: Deploy to GitHub Pages
-  #       id: deployment
-  #       uses: actions/deploy-pages@v1
-
   patch-iosevka:
     name: Patch Nerd Font
     needs: [ build ]
@@ -119,9 +79,6 @@ jobs:
     strategy:
       matrix:
         plan: [iosevka, iosevka-extended]
-    defaults:
-      run:
-        working-directory: ${{ env.cwd }}
     steps:
       - uses: actions/checkout@v2
 
@@ -129,34 +86,35 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{ matrix.plan }}-ttf
-          path: ${{ env.cwd }}/ttf
+          path: ttf
 
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with: { packages: fontforge python3-fontforge }
+      - name: Download font patcher
+        run: |
+          curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
+          unzip -n FontPatcher.zip
 
-        # curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
-        # unzip -n FontPatcher.zip
+      # - name: Cache nerd-fonts
+      #   id: cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: nerd-fonts
+      #     key: nerd-fonts
 
-      - name: Cache nerd-fonts
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.cwd }}/nerd-fonts
-          key: nerd-fonts
+      # - name: Clone nerd-fonts
+      #   if: steps.cache.outputs.cache-hit != 'true'
+      #   run: git clone https://github.com/ryanoasis/nerd-fonts.git --depth 1
 
-      - name: Clone nerd-fonts
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: git clone https://github.com/ryanoasis/nerd-fonts.git --depth 1
-        
-      - name: Pull nerd-fonts
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: git -C nerd-fonts pull
-
+      # - name: Pull nerd-fonts
+      #   if: steps.cache.outputs.cache-hit == 'true'
+      #   run: git -C nerd-fonts pull
+      # fontforge nerd-fonts/font-patcher "$f" -c -q --no-progressbars -out nerd
       - name: Patch nerd fonts
         run: |
           set -x
           for f in `find ttf -name '*.ttf'`; do
-              fontforge nerd-fonts/font-patcher "$f" -c -q --no-progressbars -out nerd
+              fontforge -./font-patcher "$f" -q -out nerd
           done
 
       - run: tree -I nerd-fonts
