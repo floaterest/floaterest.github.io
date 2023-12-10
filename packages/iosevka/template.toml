@@ -1,6 +1,6 @@
 [buildPlans.template]
 family = "template"
-spacing = "term"
+spacing = "normal"
 serifs = "sans"
 no-cv-ss = false
 export-glyph-names = true
