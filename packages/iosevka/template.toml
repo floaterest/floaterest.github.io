@@ -1,8 +1,9 @@
 [buildPlans.template]
 family = "template"
-spacing = "fontconfig-mono"
+spacing = "term"
 serifs = "sans"
-no-cv-ss = true
+no-cv-ss = false
+export-glyph-names = true
 
 [buildPlans.template.widths.normal]
 shape = 500
