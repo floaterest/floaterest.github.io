@@ -27,36 +27,35 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Cache Iosevka
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.iosevka }}
-          key: ${{ matrix.plan }}-${{ hashFiles(env.template) }}
+      # - name: Cache Iosevka
+      #   id: cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.iosevka }}
+      #     key: ${{ matrix.plan }}-${{ hashFiles(env.template) }}
       - run: tree -L 3 -I node_modules
       - name: Generate build plans
-        if: steps.cache.outputs.cache-hit != 'true'
+        # if: steps.cache.outputs.cache-hit != 'true'
         run: ${{ env.cwd }}/iosevka.sh ${{ env.template }}
 
       - uses: awalsh128/cache-apt-pkgs-action@latest
-        if: steps.cache.outputs.cache-hit != 'true'
+        # if: steps.cache.outputs.cache-hit != 'true'
         with: { packages: ttfautohint, version: 1.0 }
 
       - name: Clone Iosevka and copy build plans
-        if: steps.cache.outputs.cache-hit != 'true'
+        # if: steps.cache.outputs.cache-hit != 'true'
         run: |
           git clone https://github.com/be5invis/Iosevka.git ${{ env.iosevka }} --depth 1
           cp ${{ env.cwd }}/${{ matrix.plan }}.toml ${{ env.iosevka }}/private-build-plans.toml
-
-      - uses: actions/setup-node@v3
-        if: steps.cache.outputs.cache-hit != 'true'
-        with: { node-version: 'latest' }
+      - run: cp ${{ env.cwd }}/font-src ${{ env.iosevka }} -r
+      - run: cat ${{ env.iosevka }}/font-src/glyphs/symbol/braille.ptl
+      - uses: oven-sh/setup-bun@v1
 
       - name: Build ${{ matrix.plan }}
-        if: steps.cache.outputs.cache-hit != 'true'
+        # if: steps.cache.outputs.cache-hit != 'true'
         run: |
           cd ${{ env.iosevka }}
-          npm ci && npm run build -- contents::${{ matrix.plan }}
+          bun install && bun run build -- contents::${{ matrix.plan }}
 
       - name: Upload TTF
         uses: actions/upload-artifact@v2
