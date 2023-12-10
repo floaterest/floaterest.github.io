@@ -27,23 +27,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # - name: Cache Iosevka
-      #   id: cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ${{ env.iosevka }}
-      #     key: ${{ matrix.plan }}-${{ hashFiles(env.template) }}
+      - name: Cache Iosevka
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.iosevka }}
+          key: ${{ matrix.plan }}-${{ hashFiles(env.template) }}
       - run: tree -L 3 -I node_modules
       - name: Generate build plans
-        # if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: ${{ env.cwd }}/iosevka.sh ${{ env.template }}
 
       - uses: awalsh128/cache-apt-pkgs-action@latest
-        # if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         with: { packages: ttfautohint, version: 1.0 }
 
       - name: Clone Iosevka and copy build plans
-        # if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           git clone https://github.com/be5invis/Iosevka.git ${{ env.iosevka }} --depth 1
           cp ${{ env.cwd }}/${{ matrix.plan }}.toml ${{ env.iosevka }}/private-build-plans.toml
@@ -52,7 +52,7 @@ jobs:
       - uses: oven-sh/setup-bun@v1
 
       - name: Build ${{ matrix.plan }}
-        # if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           cd ${{ env.iosevka }}
           bun install && bun run build -- contents::${{ matrix.plan }}
@@ -71,46 +71,46 @@ jobs:
             ${{ env.dist }}/${{ matrix.plan }}/${{ matrix.plan }}.css
             ${{ env.dist }}/${{ matrix.plan }}/woff2/*
 
-  # patch-iosevka:
-  #   name: Patch Nerd Font
-  #   needs: [ build ]
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       plan: [iosevka, iosevka-extended]
-  #   steps:
-  #     - uses: actions/checkout@v2
+  patch-iosevka:
+    name: Patch Nerd Font
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        plan: [iosevka, iosevka-extended]
+    steps:
+      - uses: actions/checkout@v2
 
-  #     - name: Download ${{ matrix.plan }} TTF
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: ${{ matrix.plan }}-ttf
-  #         path: ttf
+      - name: Download ${{ matrix.plan }} TTF
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.plan }}-ttf
+          path: ttf
 
-  #     - uses: awalsh128/cache-apt-pkgs-action@latest
-  #       with: { packages: fontforge python3-fontforge }
-  #     - name: Download font patcher
-  #       run: |
-  #         curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
-  #         unzip -n FontPatcher.zip
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with: { packages: fontforge python3-fontforge }
+      - name: Download font patcher
+        run: |
+          curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
+          unzip -n FontPatcher.zip
 
-  #     - name: Patch nerd fonts
-  #       run: |
-  #         set -x
-  #         for f in `find ttf -name '*.ttf'`; do
-  #             fontforge -script ./font-patcher "$f" -c -q -out nerd
-  #         done
+      - name: Patch nerd fonts
+        run: |
+          set -x
+          for f in `find ttf -name '*.ttf'`; do
+              fontforge -script ./font-patcher "$f" -c -q -out nerd
+          done
 
-  #     - run: tree -I nerd-fonts
+      - run: tree -I nerd-fonts
 
-  #     - name: Change font names
-  #       run: fontforge ${{ env.cwd }}/unrename.py nerd ttf-nf
+      - name: Change font names
+        run: fontforge ${{ env.cwd }}/unrename.py nerd ttf-nf
 
-  #     - name: List files
-  #       run: tree -I nerd-fonts
+      - name: List files
+        run: tree -I nerd-fonts
 
-  #     - name: Upload WOFF2 NF artifacts
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: ${{ matrix.plan }}-ttf-nf
-  #         path: ttf-nf/*
+      - name: Upload WOFF2 NF artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.plan }}-ttf-nf
+          path: ttf-nf/*
