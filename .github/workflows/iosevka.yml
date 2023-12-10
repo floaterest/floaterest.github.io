@@ -72,61 +72,46 @@ jobs:
             ${{ env.dist }}/${{ matrix.plan }}/${{ matrix.plan }}.css
             ${{ env.dist }}/${{ matrix.plan }}/woff2/*
 
-  patch-iosevka:
-    name: Patch Nerd Font
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        plan: [iosevka, iosevka-extended]
-    steps:
-      - uses: actions/checkout@v2
+  # patch-iosevka:
+  #   name: Patch Nerd Font
+  #   needs: [ build ]
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       plan: [iosevka, iosevka-extended]
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: Download ${{ matrix.plan }} TTF
-        uses: actions/download-artifact@v2
-        with:
-          name: ${{ matrix.plan }}-ttf
-          path: ttf
+  #     - name: Download ${{ matrix.plan }} TTF
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: ${{ matrix.plan }}-ttf
+  #         path: ttf
 
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with: { packages: fontforge python3-fontforge }
-      - name: Download font patcher
-        run: |
-          curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
-          unzip -n FontPatcher.zip
+  #     - uses: awalsh128/cache-apt-pkgs-action@latest
+  #       with: { packages: fontforge python3-fontforge }
+  #     - name: Download font patcher
+  #       run: |
+  #         curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
+  #         unzip -n FontPatcher.zip
 
-      # - name: Cache nerd-fonts
-      #   id: cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: nerd-fonts
-      #     key: nerd-fonts
+  #     - name: Patch nerd fonts
+  #       run: |
+  #         set -x
+  #         for f in `find ttf -name '*.ttf'`; do
+  #             fontforge -script ./font-patcher "$f" -c -q -out nerd
+  #         done
 
-      # - name: Clone nerd-fonts
-      #   if: steps.cache.outputs.cache-hit != 'true'
-      #   run: git clone https://github.com/ryanoasis/nerd-fonts.git --depth 1
+  #     - run: tree -I nerd-fonts
 
-      # - name: Pull nerd-fonts
-      #   if: steps.cache.outputs.cache-hit == 'true'
-      #   run: git -C nerd-fonts pull
-      # fontforge nerd-fonts/font-patcher "$f" -c -q --no-progressbars -out nerd
-      - name: Patch nerd fonts
-        run: |
-          set -x
-          for f in `find ttf -name '*.ttf'`; do
-              fontforge -script ./font-patcher "$f" -c -q -out nerd
-          done
+  #     - name: Change font names
+  #       run: fontforge ${{ env.cwd }}/unrename.py nerd ttf-nf
 
-      - run: tree -I nerd-fonts
+  #     - name: List files
+  #       run: tree -I nerd-fonts
 
-      - name: Change font names
-        run: fontforge ${{ env.cwd }}/unrename.py nerd ttf-nf
-
-      - name: List files
-        run: tree -I nerd-fonts
-
-      - name: Upload WOFF2 NF artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.plan }}-ttf-nf
-          path: ttf-nf/*
+  #     - name: Upload WOFF2 NF artifacts
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: ${{ matrix.plan }}-ttf-nf
+  #         path: ttf-nf/*
