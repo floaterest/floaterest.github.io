@@ -15,8 +15,8 @@ glyph-block Symbol-Braille : begin
 	local stress : 0.5 * [AdviceStroke 3.375]
 	local dotRadius : PeriodRadius * [Math.min 1 (stress / HalfStroke)]
 
-	# (0.35 0.39)
-	define [BrailleYCoord y] (SymbolMid + y * 0.37 * (SymbolMid - PictTop))
+	# (0.37 0.39)
+	define [BrailleYCoord y] (SymbolMid + y * 0.38 * (SymbolMid - PictTop))
 	define [BrailleOutlineShape byte] : glyph-proc
 		foreach [bit : range 0 8] : if [maskBit byte bit] : begin
 			include : match bit
