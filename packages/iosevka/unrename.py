@@ -59,20 +59,19 @@ def new_sfnt(sfnt, family, font, full):
 def main(srcdir: str, destdir: str):
     os.makedirs(destdir, exist_ok=True)
     for file in os.listdir(srcdir):
-        print(file)
-    #     ext = os.path.splitext(file)[1]
-    #     f = fontforge.open(os.path.join(srcdir, file))
-    #     f.familyname, f.fontname, f.fullname, filename = to_names(file)
-    #     f.sfnt_names = new_sfnt(f.sfnt_names, f.familyname, f.fontname, f.fullname)
+        ext = os.path.splitext(file)[1]
+        f = fontforge.open(os.path.join(srcdir, file))
+        f.familyname, f.fontname, f.fullname, filename = to_names(file)
+        f.sfnt_names = new_sfnt(f.sfnt_names, f.familyname, f.fontname, f.fullname)
 
-    #     if f.familyname in data:
-    #         data[f.familyname].append([f.fontname, f.fullname, f.sfnt_names])
-    #     else:
-    #         data[f.familyname] = [[f.fontname, f.fullname, f.sfnt_names]]
-    #     f.generate(os.path.join(destdir, f'{filename}{ext}'))
+        if f.familyname in data:
+            data[f.familyname].append([f.fontname, f.fullname, f.sfnt_names])
+        else:
+            data[f.familyname] = [[f.fontname, f.fullname, f.sfnt_names]]
+        f.generate(os.path.join(destdir, f'{filename}{ext}'))
 
-    # with open(os.path.join(destdir, 'iosevka.json'),'w') as f:
-    #     json.dump(data, f, indent=4)
+    with open(os.path.join(destdir, 'iosevka.json'),'w') as f:
+        json.dump(data, f, indent=4)
 
 if __name__ == '__main__':
     parser = ArgumentParser()
