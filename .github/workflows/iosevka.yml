@@ -105,7 +105,8 @@ jobs:
       - run: tree -I nerd-fonts
 
       - name: Change font names
-        run: fontforge ${{ env.cwd }}/unrename.py nerd ttf-nf
+        # run: fontforge ${{ env.cwd }}/unrename.py nerd ttf-nf
+        run: mv nerd ttf-nf
 
       - name: List files
         run: tree -I nerd-fonts
