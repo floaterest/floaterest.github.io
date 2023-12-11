@@ -57,7 +57,7 @@ jobs:
         # if: steps.cache.outputs.cache-hit != 'true'
         run: |
           cd ${{ env.iosevka }}
-          bun install && bun run build -- contents::${{ matrix.plan }}
+          bun install && bun run build -- ttf::${{ matrix.plan }}
 
       - name: Upload TTF
         uses: actions/upload-artifact@v2
