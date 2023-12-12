@@ -102,13 +102,12 @@ jobs:
           for f in `find ttf -name '*.ttf'`; do
               fontforge -script ./font-patcher "$f" -c -q -out nerd
           done
-        # fontforge -script ./font-patcher "$f" -c -q -out nerd
 
       - run: tree -I nerd-fonts
 
       - name: Change font names
-        run: fontforge ${{ env.cwd }}/unrename.py nerd ttf-nf
-        # run: mv nerd ttf-nf
+        # run: fontforge -script ${{ env.cwd }}/unrename.py nerd ttf-nf
+        run: mv nerd ttf-nf
 
       - name: List files
         run: tree -I nerd-fonts
