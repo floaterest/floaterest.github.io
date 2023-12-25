@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.plan }}-ttf
-          path: ${{ env.dist }}/${{ matrix.plan }}/ttf/*
+          path: ${{ env.dist }}/${{ matrix.plan }}/TTF/*
 
       - name: Upload WOFF2
         uses: actions/upload-artifact@v2
