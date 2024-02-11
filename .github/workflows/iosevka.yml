@@ -47,8 +47,10 @@ jobs:
         run: |
           git clone https://github.com/be5invis/Iosevka.git ${{ env.iosevka }} --depth 1
           cp ${{ env.cwd }}/${{ matrix.plan }}.toml ${{ env.iosevka }}/private-build-plans.toml
-      - run: cp ${{ env.cwd }}/font-src ${{ env.iosevka }} -r
-      - run: cat ${{ env.iosevka }}/font-src/glyphs/symbol/braille.ptl
+
+      # use custom font-src
+      # - run: cp ${{ env.cwd }}/font-src ${{ env.iosevka }} -r
+      # - run: cat ${{ env.iosevka }}/font-src/glyphs/symbol/braille.ptl
 
       - uses: oven-sh/setup-bun@v1
         # if: steps.cache.outputs.cache-hit != 'true'
